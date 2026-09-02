@@ -154,7 +154,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   children: [
                     Text(
                       timerState.currentPhase.name.toUpperCase(),
-                      style: const TextStyle(
+                      style: GoogleFonts.inter(
                         color: Colors.white70,
                         fontSize: 11,
                         fontWeight: FontWeight.w700,

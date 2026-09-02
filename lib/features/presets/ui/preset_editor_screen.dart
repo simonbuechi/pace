@@ -197,7 +197,7 @@ class _PresetEditorScreenState extends ConsumerState<PresetEditorScreen> {
                         ),
                         Text(
                           '$_iterations cycles',
-                          style: TextStyle(
+                          style: GoogleFonts.inter(
                             fontWeight: FontWeight.w700,
                             color: theme.colorScheme.primary,
                           ),
@@ -288,11 +288,11 @@ class _PresetEditorScreenState extends ConsumerState<PresetEditorScreen> {
                     ),
                     title: Text(
                       phase.name,
-                      style: const TextStyle(fontWeight: FontWeight.w700),
+                      style: GoogleFonts.inter(fontWeight: FontWeight.w700),
                     ),
                     subtitle: Text(
                       'Duration: $timeLabel',
-                      style: TextStyle(
+                      style: GoogleFonts.inter(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
@@ -448,7 +448,7 @@ class _PhaseConfigModalState extends State<_PhaseConfigModal> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Minutes', style: TextStyle(fontSize: 12)),
+                    Text('Minutes', style: GoogleFonts.inter(fontSize: 12)),
                     Slider(
                       value: _minutes.toDouble(),
                       min: 0,
@@ -464,7 +464,7 @@ class _PhaseConfigModalState extends State<_PhaseConfigModal> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Seconds', style: TextStyle(fontSize: 12)),
+                    Text('Seconds', style: GoogleFonts.inter(fontSize: 12)),
                     Slider(
                       value: _seconds.toDouble(),
                       min: 0,

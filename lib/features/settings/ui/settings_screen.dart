@@ -124,8 +124,8 @@ class SettingsScreen extends ConsumerWidget {
                         SwitchListTile(
                           contentPadding: EdgeInsets.zero,
                           secondary: const Icon(Icons.volume_up_rounded),
-                          title: const Text('Sound Alerts',
-                              style: TextStyle(fontWeight: FontWeight.w700)),
+                          title: Text('Sound Alerts',
+                              style: GoogleFonts.inter(fontWeight: FontWeight.w700)),
                           subtitle: const Text('Play sound on interval transitions'),
                           value: settings.soundEnabled,
                           onChanged: (val) =>
@@ -170,8 +170,8 @@ class SettingsScreen extends ConsumerWidget {
                 Card(
                   child: SwitchListTile(
                     secondary: const Icon(Icons.notifications_active_rounded),
-                    title: const Text('Background Notifications',
-                        style: TextStyle(fontWeight: FontWeight.w700)),
+                    title: Text('Background Notifications',
+                        style: GoogleFonts.inter(fontWeight: FontWeight.w700)),
                     subtitle: const Text(
                       'Alert when intervals finish even if the app runs in the background',
                     ),
@@ -349,11 +349,11 @@ class SettingsScreen extends ConsumerWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 14),
               ),
               Text(
                 subtitle,
-                style: TextStyle(
+                style: GoogleFonts.inter(
                   fontSize: 12,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -370,9 +370,9 @@ class SettingsScreen extends ConsumerWidget {
               if (val != null) onChanged(val);
             },
             title: Text(sound.name,
-                style: const TextStyle(fontWeight: FontWeight.w600)),
+                style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
             subtitle: Text(sound.description,
-                style: const TextStyle(fontSize: 12)),
+                style: GoogleFonts.inter(fontSize: 12)),
             secondary: IconButton(
               icon: const Icon(Icons.play_circle_outline_rounded),
               tooltip: 'Preview sound',

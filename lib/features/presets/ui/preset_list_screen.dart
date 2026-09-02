@@ -85,9 +85,9 @@ class PresetListScreen extends ConsumerWidget {
                         Icon(Icons.timer_off_outlined,
                             size: 64, color: theme.colorScheme.outline),
                         const SizedBox(height: 16),
-                        const Text(
+                        Text(
                           'No routines saved yet.',
-                          style: TextStyle(
+                          style: GoogleFonts.inter(
                               fontSize: 18, fontWeight: FontWeight.w600),
                         ),
                         const SizedBox(height: 12),
@@ -178,7 +178,7 @@ class PresetListScreen extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'delete',
                         child: Row(
                           children: [
@@ -186,7 +186,7 @@ class PresetListScreen extends ConsumerWidget {
                                 color: Colors.red, size: 20),
                             SizedBox(width: 12),
                             Text('Delete',
-                                style: TextStyle(color: Colors.red)),
+                                style: GoogleFonts.inter(color: Colors.red)),
                           ],
                         ),
                       ),
@@ -280,7 +280,7 @@ class PresetListScreen extends ConsumerWidget {
           const SizedBox(width: 6),
           Text(
             label,
-            style: TextStyle(
+            style: GoogleFonts.inter(
               fontSize: 12,
               fontWeight: FontWeight.w700,
               color: color,

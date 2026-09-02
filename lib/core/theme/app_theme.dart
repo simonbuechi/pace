@@ -23,15 +23,26 @@ class AppTheme {
   }
 
   static ThemeData _buildTheme(ColorScheme colorScheme) {
-    final textTheme = GoogleFonts.interTextTheme(
-      ThemeData(colorScheme: colorScheme).textTheme,
-    );
+    final baseTheme = ThemeData(colorScheme: colorScheme);
+    final textTheme = GoogleFonts.interTextTheme(baseTheme.textTheme);
+    final primaryTextTheme = GoogleFonts.interTextTheme(baseTheme.primaryTextTheme);
 
     return ThemeData(
       useMaterial3: true,
+      fontFamily: GoogleFonts.inter().fontFamily,
+      fontFamilyFallback: const [
+        'Inter',
+        '-apple-system',
+        'BlinkMacSystemFont',
+        'Segoe UI',
+        'Roboto',
+        'Arial',
+        'sans-serif',
+      ],
       colorScheme: colorScheme,
       scaffoldBackgroundColor: colorScheme.surface,
       textTheme: textTheme,
+      primaryTextTheme: primaryTextTheme,
       cardTheme: CardThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(

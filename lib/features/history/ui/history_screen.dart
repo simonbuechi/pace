@@ -270,7 +270,7 @@ class HistoryScreen extends ConsumerWidget {
               title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
+              style: GoogleFonts.inter(
                 fontSize: 11,
                 color: theme.colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w500,
@@ -407,7 +407,7 @@ class HistoryScreen extends ConsumerWidget {
                   const SizedBox(height: 4),
                   Text(
                     '${log.iterations} ${log.iterations == 1 ? 'cycle' : 'cycles'}',
-                    style: TextStyle(
+                    style: GoogleFonts.inter(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: theme.colorScheme.onSurfaceVariant,

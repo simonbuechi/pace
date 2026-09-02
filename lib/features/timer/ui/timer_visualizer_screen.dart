@@ -120,7 +120,7 @@ class _TimerVisualizerScreenState extends ConsumerState<TimerVisualizerScreen> {
                           ),
                           child: Text(
                             timerState.preset.name,
-                            style: const TextStyle(
+                            style: GoogleFonts.inter(
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
