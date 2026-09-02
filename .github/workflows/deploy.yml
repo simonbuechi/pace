@@ -44,7 +44,10 @@ jobs:
         run: flutter test
 
       - name: Build Web Application
-        run: flutter build web --release --base-href "/${{ github.event.repository.name }}/"
+        run: flutter build web --release --base-href "/"
+
+      - name: Ensure CNAME is in build output
+        run: echo "pace.simibu.ch" > build/web/CNAME
 
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
@@ -56,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: https://pace.simibu.ch/
 
     steps:
       - name: Deploy to GitHub Pages
