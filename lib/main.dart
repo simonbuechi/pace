@@ -6,6 +6,7 @@ import 'core/services/notification_service.dart';
 import 'core/theme/app_theme.dart';
 import 'features/home/home_screen.dart';
 import 'features/settings/providers/settings_provider.dart';
+import 'features/timer/providers/timer_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,7 +53,39 @@ class PaceApp extends ConsumerWidget {
       themeMode: settings.themeMode,
       theme: AppTheme.light(focusColor),
       darkTheme: AppTheme.dark(focusColor),
+      builder: (context, child) {
+        return AppTitleSync(child: child ?? const SizedBox.shrink());
+      },
       home: const HomeScreen(),
+    );
+  }
+}
+
+class AppTitleSync extends ConsumerWidget {
+  final Widget child;
+
+  const AppTitleSync({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final timerState = ref.watch(timerProvider);
+    final theme = Theme.of(context);
+
+    final String title;
+    if (timerState.isRunning) {
+      title = '(${timerState.formattedRemainingTime}) ${timerState.currentPhase.name} • Pace Amigo';
+    } else if (timerState.isPaused) {
+      title = '(${timerState.formattedRemainingTime}) [Paused] • Pace Amigo';
+    } else if (timerState.isCompleted) {
+      title = '✓ Completed! • Pace Amigo';
+    } else {
+      title = 'Pace Amigo';
+    }
+
+    return Title(
+      title: title,
+      color: theme.colorScheme.primary,
+      child: child,
     );
   }
 }
