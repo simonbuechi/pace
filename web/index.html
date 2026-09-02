@@ -35,8 +35,48 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <title>Pace Amigo</title>
-  <link rel="manifest" href="manifest.json">
+  <!-- PWA Installation Support -->
+  <script>
+    window.pwaInstall = {
+      deferredPrompt: null,
+      isInstalled: window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true,
+      isPromptAvailable: false,
+
+      init: function() {
+        window.addEventListener('beforeinstallprompt', function(e) {
+          e.preventDefault();
+          window.pwaInstall.deferredPrompt = e;
+          window.pwaInstall.isPromptAvailable = true;
+          window.dispatchEvent(new CustomEvent('pwa-install-available'));
+        });
+
+        window.addEventListener('appinstalled', function() {
+          window.pwaInstall.deferredPrompt = null;
+          window.pwaInstall.isPromptAvailable = false;
+          window.pwaInstall.isInstalled = true;
+          window.dispatchEvent(new CustomEvent('pwa-installed'));
+        });
+      },
+
+      promptInstall: function() {
+        if (window.pwaInstall.deferredPrompt) {
+          window.pwaInstall.deferredPrompt.prompt();
+          return window.pwaInstall.deferredPrompt.userChoice.then(function(choice) {
+            if (choice.outcome === 'accepted') {
+              window.pwaInstall.deferredPrompt = null;
+              window.pwaInstall.isPromptAvailable = false;
+              window.pwaInstall.isInstalled = true;
+              window.dispatchEvent(new CustomEvent('pwa-installed'));
+              return true;
+            }
+            return false;
+          });
+        }
+        return Promise.resolve(false);
+      }
+    };
+    window.pwaInstall.init();
+  </script>
 </head>
 <body>
   <!--

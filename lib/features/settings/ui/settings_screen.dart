@@ -1,9 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pace_amigo/core/constants/app_colors.dart';
 import 'package:pace_amigo/core/constants/app_sounds.dart';
 import 'package:pace_amigo/core/providers/core_providers.dart';
+import 'package:pace_amigo/core/services/pwa_service.dart';
 import 'package:pace_amigo/core/services/sync_service.dart';
+import 'package:pace_amigo/features/home/widgets/pwa_install_banner.dart';
 import 'package:pace_amigo/features/settings/providers/settings_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -230,11 +234,95 @@ class SettingsScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
+
+                if (kIsWeb) ...[
+                  const SizedBox(height: 24),
+                  Text(
+                    'App Installation',
+                    style: GoogleFonts.inter(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildPwaCard(context, ref),
+                ],
                 const SizedBox(height: 40),
               ]),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPwaCard(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final pwaState = ref.watch(pwaProvider);
+    final isInstalled = pwaState.isStandalone;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: isInstalled
+                      ? Colors.green.withValues(alpha: 0.15)
+                      : AppColors.primaryPurple.withValues(alpha: 0.15),
+                  child: Icon(
+                    isInstalled
+                        ? Icons.check_circle_rounded
+                        : Icons.install_mobile_rounded,
+                    color: isInstalled ? Colors.green : AppColors.primaryPurple,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        isInstalled ? 'Installed as App' : 'Browser Mode (Installable)',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      Text(
+                        isInstalled
+                            ? 'Running standalone outside the browser.'
+                            : 'Install on your device for distraction-free full screen.',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            if (!isInstalled) ...[
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.tonalIcon(
+                  onPressed: () {
+                    if (pwaState.canPrompt) {
+                      ref.read(pwaProvider.notifier).promptInstall();
+                    } else {
+                      PwaInstallBanner.showInstallInstructions(context);
+                    }
+                  },
+                  icon: const Icon(Icons.download_rounded, size: 18),
+                  label: const Text('Install Pace Amigo'),
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }

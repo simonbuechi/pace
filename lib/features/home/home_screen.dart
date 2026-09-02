@@ -6,8 +6,10 @@ import '../timer/ui/quick_start_screen.dart';
 import '../timer/ui/timer_visualizer_screen.dart';
 import '../presets/ui/preset_list_screen.dart';
 import '../history/ui/history_screen.dart';
+import '../../core/services/pwa_service.dart';
 import '../settings/ui/settings_screen.dart';
 import '../settings/providers/settings_provider.dart';
+import 'widgets/pwa_install_banner.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -34,6 +36,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     final showMiniPlayer =
         (timerState.isRunning || timerState.isPaused) && !timerState.isCompleted;
+    final pwaState = ref.watch(pwaProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -59,29 +62,50 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ],
         ),
+        actions: [
+          if (pwaState.shouldShowInstallPrompt)
+            IconButton(
+              icon: const Icon(Icons.install_mobile_rounded),
+              tooltip: 'Install Pace Amigo',
+              onPressed: () {
+                if (pwaState.canPrompt) {
+                  ref.read(pwaProvider.notifier).promptInstall();
+                } else {
+                  PwaInstallBanner.showInstallInstructions(context);
+                }
+              },
+            ),
+        ],
       ),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 640),
-          child: Stack(
+          child: Column(
             children: [
-              IndexedStack(
-                index: _currentIndex,
-                children: _tabs,
-              ),
+              const PwaInstallBanner(),
+              Expanded(
+                child: Stack(
+                  children: [
+                    IndexedStack(
+                      index: _currentIndex,
+                      children: _tabs,
+                    ),
 
-              // Mini Player Banner when timer is active in background
-              if (showMiniPlayer)
-                Positioned(
-                  left: 16,
-                  right: 16,
-                  bottom: 16,
-                  child: _buildMiniPlayer(
-                    context,
-                    timerState,
-                    timerState.currentPhase.isFocus ? focusColor : breakColor,
-                  ),
+                    // Mini Player Banner when timer is active in background
+                    if (showMiniPlayer)
+                      Positioned(
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                        child: _buildMiniPlayer(
+                          context,
+                          timerState,
+                          timerState.currentPhase.isFocus ? focusColor : breakColor,
+                        ),
+                      ),
+                  ],
                 ),
+              ),
             ],
           ),
         ),
