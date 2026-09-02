@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pace_amigo/core/constants/app_colors.dart';
 import 'package:pace_amigo/features/presets/models/routine_preset.dart';
 import 'package:pace_amigo/features/timer/providers/timer_provider.dart';
 import 'timer_visualizer_screen.dart';
@@ -13,13 +15,52 @@ class QuickStartScreen extends ConsumerStatefulWidget {
 }
 
 class _QuickStartScreenState extends ConsumerState<QuickStartScreen> {
-  int _focusMinutes = 25;
+  int _focusMinutes = 5;
   int _focusSeconds = 0;
-  int _breakMinutes = 5;
+  int _breakMinutes = 1;
   int _breakSeconds = 0;
   int _iterations = 4;
 
+  late final TextEditingController _focusMinController;
+  late final TextEditingController _focusSecController;
+  late final TextEditingController _breakMinController;
+  late final TextEditingController _breakSecController;
+  late final TextEditingController _iterationsController;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusMinController = TextEditingController(text: '$_focusMinutes');
+    _focusSecController = TextEditingController(text: '$_focusSeconds');
+    _breakMinController = TextEditingController(text: '$_breakMinutes');
+    _breakSecController = TextEditingController(text: '$_breakSeconds');
+    _iterationsController = TextEditingController(text: '$_iterations');
+  }
+
+  @override
+  void dispose() {
+    _focusMinController.dispose();
+    _focusSecController.dispose();
+    _breakMinController.dispose();
+    _breakSecController.dispose();
+    _iterationsController.dispose();
+    super.dispose();
+  }
+
   void _startQuickSession() {
+    final focusTotalSec = (_focusMinutes * 60) + _focusSeconds;
+    final breakTotalSec = (_breakMinutes * 60) + _breakSeconds;
+
+    if (focusTotalSec <= 0 && breakTotalSec <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please set a focus or break duration greater than 0.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
     final preset = RoutinePreset.createStandard(
       id: 'quick_${DateTime.now().millisecondsSinceEpoch}',
       name: 'Quick Start',
@@ -82,7 +123,8 @@ class _QuickStartScreenState extends ConsumerState<QuickStartScreen> {
             accentColor: theme.colorScheme.primary,
             minutes: _focusMinutes,
             seconds: _focusSeconds,
-            presetMinutes: [0, 15, 25, 45, 60],
+            minController: _focusMinController,
+            secController: _focusSecController,
             onChanged: (m, s) => setState(() {
               _focusMinutes = m;
               _focusSeconds = s;
@@ -99,7 +141,8 @@ class _QuickStartScreenState extends ConsumerState<QuickStartScreen> {
             accentColor: theme.colorScheme.secondary,
             minutes: _breakMinutes,
             seconds: _breakSeconds,
-            presetMinutes: [0, 3, 5, 10, 15],
+            minController: _breakMinController,
+            secController: _breakSecController,
             onChanged: (m, s) => setState(() {
               _breakMinutes = m;
               _breakSeconds = s;
@@ -139,8 +182,8 @@ class _QuickStartScreenState extends ConsumerState<QuickStartScreen> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Text(
-                          '$_iterations rounds',
-                          style: TextStyle(
+                          '$_iterations ${_iterations == 1 ? "round" : "rounds"}',
+                          style: GoogleFonts.inter(
                             fontWeight: FontWeight.w700,
                             color: theme.colorScheme.onTertiaryContainer,
                           ),
@@ -150,17 +193,50 @@ class _QuickStartScreenState extends ConsumerState<QuickStartScreen> {
                   ),
                   const SizedBox(height: 16),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [1, 2, 3, 4, 6, 8].map((count) {
-                      final isSelected = count == _iterations;
-                      return ChoiceChip(
-                        label: Text('$count'),
-                        selected: isSelected,
-                        onSelected: (val) {
-                          if (val) setState(() => _iterations = count);
+                    children: [
+                      SizedBox(
+                        width: 60,
+                        child: Text(
+                          'Cycles',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Slider(
+                          value: _iterations.toDouble().clamp(1.0, 50.0),
+                          min: 1,
+                          max: 50,
+                          divisions: 49,
+                          activeColor: theme.colorScheme.tertiary,
+                          label: '$_iterations',
+                          onChanged: (val) {
+                            final count = val.round();
+                            if (count == _iterations) return;
+                            setState(() {
+                              _iterations = count;
+                              if (_iterationsController.text != '$count') {
+                                _iterationsController.text = '$count';
+                              }
+                            });
+                          },
+                        ),
+                      ),
+                      EditableValueField(
+                        controller: _iterationsController,
+                        value: _iterations,
+                        min: 1,
+                        max: 50,
+                        suffix: 'x',
+                        accentColor: theme.colorScheme.tertiary,
+                        onChanged: (newCount) {
+                          setState(() {
+                            _iterations = newCount;
+                          });
                         },
-                      );
-                    }).toList(),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -207,15 +283,38 @@ class _QuickStartScreenState extends ConsumerState<QuickStartScreen> {
           const SizedBox(height: 28),
 
           // Primary Launch CTA
-          SizedBox(
+          Container(
             width: double.infinity,
             height: 56,
-            child: FilledButton.icon(
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              borderRadius: BorderRadius.circular(28),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primaryMagenta.withValues(alpha: 0.35),
+                  blurRadius: 18,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: ElevatedButton.icon(
               onPressed: _startQuickSession,
-              icon: const Icon(Icons.play_arrow_rounded, size: 28),
-              label: const Text(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(28),
+                ),
+              ),
+              icon: const Icon(Icons.play_arrow_rounded, size: 28, color: Colors.white),
+              label: Text(
                 'Start Session',
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+                style: GoogleFonts.inter(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
@@ -231,13 +330,16 @@ class _QuickStartScreenState extends ConsumerState<QuickStartScreen> {
     required Color accentColor,
     required int minutes,
     required int seconds,
-    required List<int> presetMinutes,
+    required TextEditingController minController,
+    required TextEditingController secController,
     required void Function(int min, int sec) onChanged,
   }) {
     final theme = Theme.of(context);
 
     String durationText;
-    if (minutes == 0) {
+    if (minutes == 0 && seconds == 0) {
+      durationText = '0 min';
+    } else if (minutes == 0) {
       durationText = '${seconds}s';
     } else if (seconds == 0) {
       durationText = '$minutes min';
@@ -284,36 +386,16 @@ class _QuickStartScreenState extends ConsumerState<QuickStartScreen> {
               ],
             ),
             const SizedBox(height: 16),
-            // Quick preset chips
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: presetMinutes.map((val) {
-                final isSelected = val == 0 ? (minutes == 0 && seconds == 30) : (val == minutes && seconds == 0);
-                return ChoiceChip(
-                  label: Text(val == 0 ? '30s' : '$val m'),
-                  selected: isSelected,
-                  onSelected: (s) {
-                    if (s) {
-                      if (val == 0) {
-                        onChanged(0, 30);
-                      } else {
-                        onChanged(val, 0);
-                      }
-                    }
-                  },
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 16),
-            // Minutes Slider
+            // Minutes Slider & Editable Field
             Row(
               children: [
                 SizedBox(
                   width: 60,
                   child: Text(
                     'Minutes',
-                    style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
                 Expanded(
@@ -322,55 +404,87 @@ class _QuickStartScreenState extends ConsumerState<QuickStartScreen> {
                     min: 0,
                     max: 90,
                     divisions: 90,
+                    activeColor: accentColor,
                     label: '$minutes m',
                     onChanged: (val) {
                       final newMin = val.round();
                       final newSec = (newMin == 0 && seconds == 0) ? 15 : seconds;
+                      if (newMin == minutes && newSec == seconds) return;
+                      if (minController.text != '$newMin') {
+                        minController.text = '$newMin';
+                      }
+                      if (newSec != seconds && secController.text != '$newSec') {
+                        secController.text = '$newSec';
+                      }
                       onChanged(newMin, newSec);
                     },
                   ),
                 ),
-                SizedBox(
-                  width: 44,
-                  child: Text(
-                    '$minutes m',
-                    textAlign: TextAlign.right,
-                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
-                  ),
+                EditableValueField(
+                  controller: minController,
+                  value: minutes,
+                  min: 0,
+                  max: 90,
+                  suffix: 'm',
+                  accentColor: accentColor,
+                  onChanged: (newMin) {
+                    final newSec = (newMin == 0 && seconds == 0) ? 15 : seconds;
+                    if (newSec != seconds && secController.text != '$newSec') {
+                      secController.text = '$newSec';
+                    }
+                    onChanged(newMin, newSec);
+                  },
                 ),
               ],
             ),
-            // Seconds Slider
+            // Seconds Slider & Editable Field
             Row(
               children: [
                 SizedBox(
                   width: 60,
                   child: Text(
                     'Seconds',
-                    style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
                 Expanded(
                   child: Slider(
-                    value: seconds.toDouble().clamp(0.0, 55.0),
+                    value: seconds.toDouble().clamp(0.0, 59.0),
                     min: 0,
-                    max: 55,
-                    divisions: 11,
+                    max: 59,
+                    divisions: 59,
+                    activeColor: accentColor,
                     label: '$seconds s',
                     onChanged: (val) {
                       final newSec = val.round();
                       final newMin = (minutes == 0 && newSec == 0) ? 1 : minutes;
+                      if (newSec == seconds && newMin == minutes) return;
+                      if (secController.text != '$newSec') {
+                        secController.text = '$newSec';
+                      }
+                      if (newMin != minutes && minController.text != '$newMin') {
+                        minController.text = '$newMin';
+                      }
                       onChanged(newMin, newSec);
                     },
                   ),
                 ),
-                SizedBox(
-                  width: 44,
-                  child: Text(
-                    '$seconds s',
-                    textAlign: TextAlign.right,
-                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
-                  ),
+                EditableValueField(
+                  controller: secController,
+                  value: seconds,
+                  min: 0,
+                  max: 59,
+                  suffix: 's',
+                  accentColor: accentColor,
+                  onChanged: (newSec) {
+                    final newMin = (minutes == 0 && newSec == 0) ? 1 : minutes;
+                    if (newMin != minutes && minController.text != '$newMin') {
+                      minController.text = '$newMin';
+                    }
+                    onChanged(newMin, newSec);
+                  },
                 ),
               ],
             ),
@@ -381,3 +495,132 @@ class _QuickStartScreenState extends ConsumerState<QuickStartScreen> {
   }
 }
 
+class EditableValueField extends StatefulWidget {
+  final TextEditingController controller;
+  final int value;
+  final int min;
+  final int max;
+  final String suffix;
+  final Color accentColor;
+  final ValueChanged<int> onChanged;
+
+  const EditableValueField({
+    super.key,
+    required this.controller,
+    required this.value,
+    required this.min,
+    required this.max,
+    required this.suffix,
+    required this.accentColor,
+    required this.onChanged,
+  });
+
+  @override
+  State<EditableValueField> createState() => _EditableValueFieldState();
+}
+
+class _EditableValueFieldState extends State<EditableValueField> {
+  late final FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+    _focusNode.addListener(_handleFocusChange);
+  }
+
+  @override
+  void didUpdateWidget(covariant EditableValueField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!_focusNode.hasFocus && widget.controller.text != '${widget.value}') {
+      widget.controller.text = '${widget.value}';
+    }
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_handleFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _handleFocusChange() {
+    if (!_focusNode.hasFocus) {
+      _finalizeValue();
+    }
+  }
+
+  void _finalizeValue() {
+    final parsed = int.tryParse(widget.controller.text);
+    final finalVal = (parsed ?? widget.value).clamp(widget.min, widget.max);
+    if (widget.controller.text != '$finalVal') {
+      widget.controller.text = '$finalVal';
+    }
+    widget.onChanged(finalVal);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return SizedBox(
+      width: 62,
+      height: 38,
+      child: TextField(
+        controller: widget.controller,
+        focusNode: _focusNode,
+        keyboardType: TextInputType.number,
+        textAlign: TextAlign.center,
+        style: GoogleFonts.inter(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          color: theme.colorScheme.onSurface,
+        ),
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(widget.max >= 100 ? 3 : 2),
+        ],
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+          suffixText: widget.suffix,
+          suffixStyle: GoogleFonts.inter(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+          filled: true,
+          fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(
+              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.6),
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(
+              color: widget.accentColor,
+              width: 1.8,
+            ),
+          ),
+          isDense: true,
+        ),
+        onChanged: (text) {
+          if (text.isEmpty) return;
+          final val = int.tryParse(text);
+          if (val != null) {
+            final clamped = val.clamp(widget.min, widget.max);
+            widget.onChanged(clamped);
+          }
+        },
+        onSubmitted: (_) {
+          _finalizeValue();
+          FocusScope.of(context).unfocus();
+        },
+        onTapOutside: (_) {
+          _finalizeValue();
+          FocusScope.of(context).unfocus();
+        },
+      ),
+    );
+  }
+}

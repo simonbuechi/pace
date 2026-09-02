@@ -17,9 +17,11 @@ void main() {
 
   tearDownAll(() async {
     await Hive.close();
-    if (tempDir.existsSync()) {
-      await tempDir.delete(recursive: true);
-    }
+    try {
+      if (tempDir.existsSync()) {
+        await tempDir.delete(recursive: true);
+      }
+    } catch (_) {}
   });
 
   group('FocusRunLog Tests', () {

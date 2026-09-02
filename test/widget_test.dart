@@ -14,9 +14,11 @@ void main() {
 
   tearDownAll(() async {
     await Hive.close();
-    if (tempDir.existsSync()) {
-      await tempDir.delete(recursive: true);
-    }
+    try {
+      if (tempDir.existsSync()) {
+        await tempDir.delete(recursive: true);
+      }
+    } catch (_) {}
   });
 
   testWidgets('Pace Amigo smoke test - renders main navigation and header',
