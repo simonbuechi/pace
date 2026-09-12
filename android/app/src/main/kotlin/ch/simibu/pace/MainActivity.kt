@@ -1,4 +1,4 @@
-package com.paceamigo.pace_amigo
+package ch.simibu.pace
 
 import io.flutter.embedding.android.FlutterActivity
 
