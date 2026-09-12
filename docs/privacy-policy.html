@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - Pace Amigo</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --heading: #f0f6fc;
+      --primary: #58a6ff;
+      --accent: #238636;
+      --muted: #8b949e;
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f6f8fa;
+        --card-bg: #ffffff;
+        --border: #d0d7de;
+        --text: #24292f;
+        --heading: #1f2328;
+        --primary: #0969da;
+        --accent: #1a7f37;
+        --muted: #57606a;
+      }
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background-color: var(--bg);
+      padding: 2rem 1rem;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2.5rem;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    }
+    h1 {
+      font-size: 2rem;
+      color: var(--heading);
+      margin-bottom: 0.5rem;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.25rem;
+    }
+    h2 {
+      font-size: 1.35rem;
+      color: var(--heading);
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4rem;
+    }
+    h3 {
+      font-size: 1.1rem;
+      color: var(--heading);
+      margin-top: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      margin-bottom: 1rem;
+    }
+    ul {
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    li {
+      margin-bottom: 0.4rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.25rem 0;
+      font-size: 0.95rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+    th {
+      background-color: rgba(255, 255, 255, 0.04);
+      color: var(--heading);
+    }
+    code {
+      background: rgba(127, 127, 127, 0.15);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 0.9em;
+    }
+    a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .callout {
+      background: rgba(88, 166, 255, 0.1);
+      border-left: 4px solid var(--primary);
+      padding: 1rem 1.25rem;
+      border-radius: 4px;
+      margin: 1.5rem 0;
+    }
+    footer {
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+      color: var(--muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Privacy Policy for Pace Amigo</h1>
+    <div class="meta">
+      <strong>Last updated:</strong> September 12, 2026<br>
+      <strong>Application Name:</strong> Pace Amigo<br>
+      <strong>Application ID:</strong> <code>ch.simibu.pace</code><br>
+      <strong>Developer:</strong> Simon Büchi
+    </div>
+
+    <div class="callout">
+      <strong>Key Takeaway:</strong> Pace Amigo is an ambient interval timer built with privacy by default. We do not collect, sell, or rent your personal information. All your timers, intervals, and history stay locally on your device.
+    </div>
+
+    <h2>1. Introduction</h2>
+    <p>Pace Amigo ("we", "our", or "the App") is an ambient interval and focus timer designed to respect your privacy. This Privacy Policy explains how Pace Amigo handles user information, device permissions, and data storage.</p>
+
+    <h2>2. Information We Collect</h2>
+    <h3>A. Personal Data</h3>
+    <p><strong>We do not collect personal information.</strong> We do not ask for, collect, or store your name, email address, phone number, physical address, financial information, or government identifiers. No user account or registration is required to use the App.</p>
+
+    <h3>B. Usage &amp; Timer Data</h3>
+    <ul>
+      <li><strong>Timer Presets &amp; History:</strong> Your custom interval configurations and completion logs (duration, intervals, timestamp) are processed strictly to deliver timer features.</li>
+      <li><strong>Local Storage:</strong> All session data and settings are stored locally on your device using local database storage (Hive).</li>
+      <li><strong>Identifiers:</strong> Session records use locally generated anonymous UUIDs solely for indexing. They cannot be used to personally identify you.</li>
+    </ul>
+
+    <h3>C. Analytics and Advertising</h3>
+    <ul>
+      <li>Pace Amigo does not contain third-party advertising SDKs.</li>
+      <li>Pace Amigo does not use behavioral tracking or third-party analytics trackers.</li>
+    </ul>
+
+    <h2>3. Device Permissions</h2>
+    <p>Pace Amigo requests only the minimal permissions required for core timer functionality:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Permission</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>POST_NOTIFICATIONS</code></td>
+          <td>Sends timer transition and completion alerts when the app is running in the background.</td>
+        </tr>
+        <tr>
+          <td><code>VIBRATE</code></td>
+          <td>Provides tactile haptic countdown feedback for intervals and transitions.</td>
+        </tr>
+        <tr>
+          <td><code>WAKE_LOCK</code></td>
+          <td>Keeps the screen awake during active focus sessions when ambient display is enabled.</td>
+        </tr>
+        <tr>
+          <td><code>INTERNET</code></td>
+          <td>Loads typography (Google Fonts) and supports optional cloud backup if configured.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>4. Third-Party Services</h2>
+    <p>The App may interact with the following third-party services:</p>
+    <ul>
+      <li><strong>Google Fonts:</strong> The app renders typography using Google Fonts. Fonts are fetched via standard HTTP requests subject to the <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a>.</li>
+      <li><strong>Google Play Services:</strong> Distributed via Google Play, which may collect standard platform diagnostics and install stats in accordance with Google Play terms.</li>
+    </ul>
+
+    <h2>5. Data Retention &amp; Deletion</h2>
+    <p>Because your data is stored locally on your device, you have complete control over it:</p>
+    <ul>
+      <li><strong>Deleting History:</strong> You can clear your session history at any time from within the app settings or via <em>Android Settings &gt; Apps &gt; Pace Amigo &gt; Storage &gt; Clear Data</em>.</li>
+      <li><strong>Uninstalling:</strong> Uninstalling the app permanently and immediately removes all local data from your device.</li>
+    </ul>
+
+    <h2>6. Children’s Privacy</h2>
+    <p>Pace Amigo does not knowingly collect personal information from children under the age of 13 (or the minimum legal age in your jurisdiction).</p>
+
+    <h2>7. Security</h2>
+    <p>Your session data remains on your device. Because we do not operate centralized user databases of personal data, the risk of data compromise or external interception is minimized.</p>
+
+    <h2>8. Changes to This Policy</h2>
+    <p>We may update this Privacy Policy periodically. The revised policy will be posted here with an updated "Last updated" date.</p>
+
+    <h2>9. Contact</h2>
+    <p>If you have any questions or feedback regarding this Privacy Policy, please contact:</p>
+    <ul>
+      <li><strong>Email:</strong> <a href="mailto:simon@buechi.ch">simon@buechi.ch</a></li>
+      <li><strong>Project Repository:</strong> <a href="https://github.com/simonbuechi/pace" target="_blank" rel="noopener">https://github.com/simonbuechi/pace</a></li>
+    </ul>
+
+    <footer>
+      &copy; 2026 Simon Büchi &bull; Pace Amigo
+    </footer>
+  </div>
+</body>
+</html>
