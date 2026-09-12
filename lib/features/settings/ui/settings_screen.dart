@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pace_amigo/core/constants/app_colors.dart';
@@ -60,7 +61,7 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 24),
 
 
-                // 2. Appearance (Light / Dark Mode)
+                // 2. Appearance (System / Light / Dark Mode)
                 Text(
                   'Appearance',
                   style: GoogleFonts.inter(
@@ -71,30 +72,81 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 Card(
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(12),
                     child: Column(
                       children: [
-                        SegmentedButton<ThemeMode>(
-                          segments: const [
-                            ButtonSegment(
-                              value: ThemeMode.system,
-                              icon: Icon(Icons.brightness_auto_rounded),
-                              label: Text('System'),
+                        Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.surfaceContainerHighest
+                                .withValues(alpha: 0.5),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Row(
+                            children: [
+                              _buildThemeSegment(
+                                theme: theme,
+                                label: 'System',
+                                icon: Icons.brightness_auto_rounded,
+                                isSelected:
+                                    settings.themeMode == ThemeMode.system,
+                                onTap: () => settingsNotifier
+                                    .setThemeMode(ThemeMode.system),
+                              ),
+                              _buildThemeSegment(
+                                theme: theme,
+                                label: 'Light',
+                                icon: Icons.light_mode_rounded,
+                                isSelected:
+                                    settings.themeMode == ThemeMode.light,
+                                onTap: () => settingsNotifier
+                                    .setThemeMode(ThemeMode.light),
+                              ),
+                              _buildThemeSegment(
+                                theme: theme,
+                                label: 'Dark',
+                                icon: Icons.dark_mode_rounded,
+                                isSelected:
+                                    settings.themeMode == ThemeMode.dark,
+                                onTap: () => settingsNotifier
+                                    .setThemeMode(ThemeMode.dark),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Divider(),
+                        SwitchListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 4, vertical: 2),
+                          secondary: Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryPurple
+                                  .withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            ButtonSegment(
-                              value: ThemeMode.light,
-                              icon: Icon(Icons.light_mode_rounded),
-                              label: Text('Light'),
+                            child: const Center(
+                              child: Icon(
+                                Icons.auto_awesome_rounded,
+                                color: AppColors.primaryPurple,
+                                size: 18,
+                              ),
                             ),
-                            ButtonSegment(
-                              value: ThemeMode.dark,
-                              icon: Icon(Icons.dark_mode_rounded),
-                              label: Text('Dark'),
-                            ),
-                          ],
-                          selected: {settings.themeMode},
-                          onSelectionChanged: (val) {
-                            settingsNotifier.setThemeMode(val.first);
+                          ),
+                          title: Text(
+                            'Background Animations',
+                            style: GoogleFonts.inter(
+                                fontWeight: FontWeight.w700),
+                          ),
+                          subtitle: const Text(
+                            'Dynamic ambient atmosphere & floating energy orbs in visualizer',
+                          ),
+                          value: settings.backgroundAnimationsEnabled,
+                          onChanged: (val) {
+                            HapticFeedback.selectionClick();
+                            settingsNotifier.toggleBackgroundAnimations(val);
                           },
                         ),
                       ],
@@ -102,63 +154,89 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                 ),
 
+
                 const SizedBox(height: 24),
 
-                // 3. Alert Sounds
+                // 3. Default Sounds (Separate Focus and Break sound cards)
                 Text(
-                  'Transition Alert Sounds',
+                  'Default Sounds',
                   style: GoogleFonts.inter(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 Text(
-                  'Choose distinct audio cues for entering Focus and Break sessions.',
+                  'Configure distinct default audio cues for focus intervals and rest breaks.',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
                 const SizedBox(height: 12),
+
+                // Master sound toggle card
                 Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        SwitchListTile(
-                          contentPadding: EdgeInsets.zero,
-                          secondary: const Icon(Icons.volume_up_rounded),
-                          title: Text('Sound Alerts',
-                              style: GoogleFonts.inter(fontWeight: FontWeight.w700)),
-                          subtitle: const Text('Play sound on interval transitions'),
-                          value: settings.soundEnabled,
-                          onChanged: (val) =>
-                              settingsNotifier.toggleSound(val),
+                  child: SwitchListTile(
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    secondary: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryPurple.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Icons.volume_up_rounded,
+                          color: AppColors.primaryPurple,
+                          size: 20,
                         ),
-                        const Divider(),
-                        // Focus Sound selector
-                        _buildSoundSelector(
-                          context,
-                          title: 'Focus Start Sound',
-                          subtitle: 'Cues the start of a focus interval',
-                          selectedSoundId: settings.focusSoundId,
-                          onChanged: (id) => settingsNotifier.setFocusSound(id),
-                          onPreview: (sound) => audio.playSound(sound),
-                        ),
-                        const Divider(),
-                        // Break Sound selector
-                        _buildSoundSelector(
-                          context,
-                          title: 'Break Start Sound',
-                          subtitle: 'Cues the start of a rest interval',
-                          selectedSoundId: settings.breakSoundId,
-                          onChanged: (id) => settingsNotifier.setBreakSound(id),
-                          onPreview: (sound) => audio.playSound(sound),
-                        ),
-                      ],
+                      ),
                     ),
+                    title: Text(
+                      'Sound Alerts',
+                      style: GoogleFonts.inter(fontWeight: FontWeight.w700),
+                    ),
+                    subtitle:
+                        const Text('Play audio cues on interval transitions'),
+                    value: settings.soundEnabled,
+                    onChanged: (val) => settingsNotifier.toggleSound(val),
                   ),
                 ),
+
+                const SizedBox(height: 16),
+
+                // Dedicated Separate Focus Sound Card
+                _buildSeparateSoundCard(
+                  context,
+                  theme: theme,
+                  title: 'Focus Start Sound',
+                  subtitle: 'Plays when entering a focus session',
+                  icon: Icons.bolt_rounded,
+                  accentColor: AppColors.primaryPurple,
+                  selectedSoundId: settings.focusSoundId,
+                  isEnabled: settings.soundEnabled,
+                  onChanged: (id) => settingsNotifier.setFocusSound(id),
+                  onPreview: (sound) => audio.playSound(sound),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Dedicated Separate Break Sound Card
+                _buildSeparateSoundCard(
+                  context,
+                  theme: theme,
+                  title: 'Break Start Sound',
+                  subtitle: 'Plays when entering a rest break',
+                  icon: Icons.spa_rounded,
+                  accentColor: AppColors.primaryMagenta,
+                  selectedSoundId: settings.breakSoundId,
+                  isEnabled: settings.soundEnabled,
+                  onChanged: (id) => settingsNotifier.setBreakSound(id),
+                  onPreview: (sound) => audio.playSound(sound),
+                ),
+
 
                 const SizedBox(height: 24),
 
@@ -419,56 +497,218 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSoundSelector(
-    BuildContext context, {
-    required String title,
-    required String subtitle,
-    required String selectedSoundId,
-    required void Function(String) onChanged,
-    required void Function(SoundOption) onPreview,
+  Widget _buildThemeSegment({
+    required ThemeData theme,
+    required String label,
+    required IconData icon,
+    required bool isSelected,
+    required VoidCallback onTap,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    final isDark = theme.brightness == Brightness.dark;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onTap();
+        },
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? (isDark ? const Color(0xFF282338) : Colors.white)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color:
+                          Colors.black.withValues(alpha: isDark ? 0.35 : 0.08),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                title,
-                style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 14),
+              Icon(
+                icon,
+                size: 16,
+                color: isSelected
+                    ? AppColors.primaryPurple
+                    : theme.colorScheme.onSurfaceVariant,
               ),
+              const SizedBox(width: 6),
               Text(
-                subtitle,
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                label,
+                maxLines: 1,
+                softWrap: false,
+                overflow: TextOverflow.clip,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                  color: isSelected
+                      ? theme.colorScheme.onSurface
+                      : theme.colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
           ),
         ),
-        ...AppSounds.all.map((sound) {
-          return RadioListTile<String>(
-            contentPadding: EdgeInsets.zero,
-            value: sound.id,
-            groupValue: selectedSoundId,
-            onChanged: (val) {
-              if (val != null) onChanged(val);
-            },
-            title: Text(sound.name,
-                style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
-            subtitle: Text(sound.description,
-                style: GoogleFonts.inter(fontSize: 12)),
-            secondary: IconButton(
-              icon: const Icon(Icons.play_circle_outline_rounded),
-              tooltip: 'Preview sound',
-              onPressed: () => onPreview(sound),
+      ),
+    );
+  }
+
+  Widget _buildSeparateSoundCard(
+    BuildContext context, {
+    required ThemeData theme,
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color accentColor,
+    required String selectedSoundId,
+    required bool isEnabled,
+    required void Function(String) onChanged,
+    required void Function(SoundOption) onPreview,
+  }) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Card Header
+            Row(
+              children: [
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: Icon(icon, color: accentColor, size: 18),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: GoogleFonts.inter(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15,
+                        ),
+                      ),
+                      Text(
+                        subtitle,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          );
-        }),
-      ],
+
+            const SizedBox(height: 12),
+            const Divider(height: 1),
+            const SizedBox(height: 6),
+
+            // Sound Options List
+            ...AppSounds.all.map((sound) {
+              final isSelected = sound.id == selectedSoundId;
+              return Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: isEnabled
+                      ? () {
+                          HapticFeedback.selectionClick();
+                          onChanged(sound.id);
+                        }
+                      : null,
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                    child: Row(
+                      children: [
+                        // Radio indicator
+                        Icon(
+                          isSelected
+                              ? Icons.radio_button_checked_rounded
+                              : Icons.radio_button_unchecked_rounded,
+                          color: isSelected
+                              ? accentColor
+                              : theme.colorScheme.onSurfaceVariant
+                                  .withValues(alpha: 0.5),
+                          size: 20,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                sound.name,
+                                style: GoogleFonts.inter(
+                                  fontWeight: isSelected
+                                      ? FontWeight.w700
+                                      : FontWeight.w500,
+                                  fontSize: 13.5,
+                                  color: isEnabled
+                                      ? (isSelected
+                                          ? theme.colorScheme.onSurface
+                                          : theme.colorScheme.onSurfaceVariant)
+                                      : theme.disabledColor,
+                                ),
+                              ),
+                              const SizedBox(height: 1),
+                              Text(
+                                sound.description,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  fontSize: 11.5,
+                                  color: theme.colorScheme.onSurfaceVariant
+                                      .withValues(alpha: 0.7),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        // Preview play button
+                        IconButton(
+                          style: IconButton.styleFrom(
+                            backgroundColor: accentColor.withValues(
+                                alpha: isSelected ? 0.15 : 0.06),
+                            foregroundColor: accentColor,
+                            padding: const EdgeInsets.all(6),
+                            minimumSize: const Size(34, 34),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          icon: const Icon(Icons.play_arrow_rounded, size: 20),
+                          tooltip: 'Preview sound',
+                          onPressed: isEnabled ? () => onPreview(sound) : null,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ],
+        ),
+      ),
     );
   }
 }

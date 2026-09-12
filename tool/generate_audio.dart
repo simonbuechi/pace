@@ -47,7 +47,6 @@ Uint8List createWav(List<double> samples, {int sampleRate = 44100}) {
 }
 
 List<double> generateStandardBeep({int sampleRate = 44100}) {
-  // Dual tone beep: 880Hz then 1318Hz with smooth envelope
   final totalDuration = 0.55;
   final totalSamples = (sampleRate * totalDuration).toInt();
   final samples = List<double>.filled(totalSamples, 0.0);
@@ -73,7 +72,6 @@ List<double> generateStandardBeep({int sampleRate = 44100}) {
 }
 
 List<double> generateTempleBell({int sampleRate = 44100}) {
-  // Rich bell tone: 528Hz fundamental with harmonics and exponential decay
   final totalDuration = 1.8;
   final totalSamples = (sampleRate * totalDuration).toInt();
   final samples = List<double>.filled(totalSamples, 0.0);
@@ -93,7 +91,6 @@ List<double> generateTempleBell({int sampleRate = 44100}) {
 }
 
 List<double> generateDigitalPulse({int sampleRate = 44100}) {
-  // Modern techno pulse: 3 fast rising chirps
   final totalDuration = 0.5;
   final totalSamples = (sampleRate * totalDuration).toInt();
   final samples = List<double>.filled(totalSamples, 0.0);
@@ -115,6 +112,92 @@ List<double> generateDigitalPulse({int sampleRate = 44100}) {
   return samples;
 }
 
+List<double> generateSingingBowl({int sampleRate = 44100}) {
+  final totalDuration = 2.4;
+  final totalSamples = (sampleRate * totalDuration).toInt();
+  final samples = List<double>.filled(totalSamples, 0.0);
+
+  for (int i = 0; i < totalSamples; i++) {
+    final t = i / sampleRate;
+    final attack = (i < 1200) ? i / 1200.0 : 1.0;
+    final decay = exp(-1.5 * t);
+    // 432Hz meditative warm resonance with subtle frequency modulation
+    final mod = sin(2 * pi * 4.5 * t) * 1.5;
+    final wave1 = sin(2 * pi * (432.0 + mod) * t);
+    final wave2 = sin(2 * pi * 864.0 * t) * 0.3;
+    final wave3 = sin(2 * pi * 1296.0 * t) * 0.12;
+    samples[i] = (wave1 + wave2 + wave3) * attack * decay * 0.75;
+  }
+
+  return samples;
+}
+
+List<double> generateGentleChime({int sampleRate = 44100}) {
+  final totalDuration = 1.4;
+  final totalSamples = (sampleRate * totalDuration).toInt();
+  final samples = List<double>.filled(totalSamples, 0.0);
+
+  final chime1Len = (sampleRate * 0.8).toInt();
+  final chime2Offset = (sampleRate * 0.12).toInt();
+  final chime2Len = totalSamples - chime2Offset;
+
+  // First chime: 1046.5Hz (C6)
+  for (int i = 0; i < chime1Len; i++) {
+    final t = i / sampleRate;
+    final attack = (i < 200) ? i / 200.0 : 1.0;
+    final decay = exp(-3.8 * t);
+    samples[i] += sin(2 * pi * 1046.5 * t) * attack * decay * 0.55;
+  }
+
+  // Second chime: 1318.5Hz (E6)
+  for (int i = 0; i < chime2Len; i++) {
+    final t = i / sampleRate;
+    final attack = (i < 200) ? i / 200.0 : 1.0;
+    final decay = exp(-3.2 * t);
+    samples[chime2Offset + i] += sin(2 * pi * 1318.5 * t) * attack * decay * 0.65;
+  }
+
+  return samples;
+}
+
+List<double> generateMarimbaPop({int sampleRate = 44100}) {
+  final totalDuration = 0.6;
+  final totalSamples = (sampleRate * totalDuration).toInt();
+  final samples = List<double>.filled(totalSamples, 0.0);
+
+  // Soft wooden percussive mallet strike (523Hz C5)
+  for (int i = 0; i < totalSamples; i++) {
+    final t = i / sampleRate;
+    final attack = (i < 80) ? i / 80.0 : 1.0;
+    final decay = exp(-8.5 * t);
+    final wave1 = sin(2 * pi * 523.25 * t);
+    final wave2 = sin(2 * pi * 1046.5 * t) * 0.25;
+    samples[i] = (wave1 + wave2) * attack * decay * 0.85;
+  }
+
+  return samples;
+}
+
+List<double> generateZenGong({int sampleRate = 44100}) {
+  final totalDuration = 2.5;
+  final totalSamples = (sampleRate * totalDuration).toInt();
+  final samples = List<double>.filled(totalSamples, 0.0);
+
+  // Deep resonant gong (216Hz with 108Hz sub-bass)
+  for (int i = 0; i < totalSamples; i++) {
+    final t = i / sampleRate;
+    final attack = (i < 800) ? i / 800.0 : 1.0;
+    final decay = exp(-1.4 * t);
+    final sub = sin(2 * pi * 108.0 * t) * 0.4;
+    final fund = sin(2 * pi * 216.0 * t) * 0.7;
+    final harm1 = sin(2 * pi * 432.0 * t) * 0.25;
+    final harm2 = sin(2 * pi * 648.0 * t) * 0.12;
+    samples[i] = (sub + fund + harm1 + harm2) * attack * decay * 0.8;
+  }
+
+  return samples;
+}
+
 void main() {
   final outDir = Directory('assets/sounds');
   if (!outDir.existsSync()) {
@@ -122,11 +205,10 @@ void main() {
   }
 
   File('assets/sounds/beep.wav').writeAsBytesSync(createWav(generateStandardBeep()));
-  print('Generated beep.wav');
-
   File('assets/sounds/temple_bell.wav').writeAsBytesSync(createWav(generateTempleBell()));
-  print('Generated temple_bell.wav');
-
   File('assets/sounds/digital_pulse.wav').writeAsBytesSync(createWav(generateDigitalPulse()));
-  print('Generated digital_pulse.wav');
+  File('assets/sounds/singing_bowl.wav').writeAsBytesSync(createWav(generateSingingBowl()));
+  File('assets/sounds/gentle_chime.wav').writeAsBytesSync(createWav(generateGentleChime()));
+  File('assets/sounds/marimba_pop.wav').writeAsBytesSync(createWav(generateMarimbaPop()));
+  File('assets/sounds/zen_gong.wav').writeAsBytesSync(createWav(generateZenGong()));
 }

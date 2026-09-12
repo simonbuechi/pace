@@ -6,10 +6,12 @@ import 'package:pace_amigo/features/timer/models/interval_phase.dart';
 import 'package:pace_amigo/features/timer/models/timer_state.dart';
 import 'package:pace_amigo/features/settings/providers/settings_provider.dart';
 import 'package:pace_amigo/features/history/providers/history_provider.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class TimerNotifier extends StateNotifier<TimerState> {
   final Ref _ref;
   Timer? _timer;
+  DateTime? _phaseEndTime;
 
   TimerNotifier(this._ref)
       : super(
@@ -56,6 +58,16 @@ class TimerNotifier extends StateNotifier<TimerState> {
     );
   }
 
+  void _updateWakelock(bool enable) {
+    try {
+      if (enable) {
+        WakelockPlus.enable();
+      } else {
+        WakelockPlus.disable();
+      }
+    } catch (_) {}
+  }
+
   /// Start or resume timer
   void start() {
     if (state.isCompleted) {
@@ -63,7 +75,10 @@ class TimerNotifier extends StateNotifier<TimerState> {
     }
     if (state.isRunning) return;
 
+    _phaseEndTime =
+        DateTime.now().add(Duration(seconds: state.remainingSeconds));
     state = state.copyWith(isRunning: true, isPaused: false);
+    _updateWakelock(true);
     _playPhaseAlert(state.currentPhase);
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -74,6 +89,8 @@ class TimerNotifier extends StateNotifier<TimerState> {
   /// Pause timer
   void pause() {
     _cancelTimer();
+    _phaseEndTime = null;
+    _updateWakelock(false);
     state = state.copyWith(isRunning: false, isPaused: true);
   }
 
@@ -85,6 +102,8 @@ class TimerNotifier extends StateNotifier<TimerState> {
   /// Reset active routine back to beginning
   void reset() {
     _cancelTimer();
+    _phaseEndTime = null;
+    _updateWakelock(false);
     final firstPhase = state.preset.phases.isNotEmpty
         ? state.preset.phases.first
         : const IntervalPhase(
@@ -116,6 +135,8 @@ class TimerNotifier extends StateNotifier<TimerState> {
     _cancelTimer();
     if (state.remainingSeconds < state.totalPhaseSeconds - 3) {
       // If we've already run 3+ seconds into the phase, restart current phase
+      _phaseEndTime = null;
+      _updateWakelock(false);
       state = state.copyWith(
         remainingSeconds: state.totalPhaseSeconds,
         isRunning: false,
@@ -125,6 +146,8 @@ class TimerNotifier extends StateNotifier<TimerState> {
     }
 
     // Go to previous phase
+    _phaseEndTime = null;
+    _updateWakelock(false);
     if (state.currentPhaseIndex > 0) {
       final prevIndex = state.currentPhaseIndex - 1;
       final prevPhase = state.preset.phases[prevIndex];
@@ -151,11 +174,19 @@ class TimerNotifier extends StateNotifier<TimerState> {
   }
 
   void _tick() {
-    if (state.remainingSeconds > 1) {
-      state = state.copyWith(remainingSeconds: state.remainingSeconds - 1);
+    if (_phaseEndTime != null) {
+      final diff = _phaseEndTime!.difference(DateTime.now()).inSeconds;
+      if (diff > 0) {
+        state = state.copyWith(remainingSeconds: diff);
+        return;
+      }
     } else {
-      _advanceToNextPhase();
+      if (state.remainingSeconds > 1) {
+        state = state.copyWith(remainingSeconds: state.remainingSeconds - 1);
+        return;
+      }
     }
+    _advanceToNextPhase();
   }
 
   void _advanceToNextPhase() {
@@ -165,6 +196,8 @@ class TimerNotifier extends StateNotifier<TimerState> {
     if (hasNextPhaseInCycle) {
       final nextIndex = state.currentPhaseIndex + 1;
       final nextPhase = state.preset.phases[nextIndex];
+      _phaseEndTime =
+          DateTime.now().add(Duration(seconds: nextPhase.durationInSeconds));
       state = state.copyWith(
         currentPhaseIndex: nextIndex,
         remainingSeconds: nextPhase.durationInSeconds,
@@ -177,6 +210,8 @@ class TimerNotifier extends StateNotifier<TimerState> {
       if (hasNextIteration) {
         final nextIteration = state.currentIteration + 1;
         final firstPhase = state.preset.phases.first;
+        _phaseEndTime =
+            DateTime.now().add(Duration(seconds: firstPhase.durationInSeconds));
         state = state.copyWith(
           currentIteration: nextIteration,
           currentPhaseIndex: 0,
@@ -187,6 +222,8 @@ class TimerNotifier extends StateNotifier<TimerState> {
       } else {
         // Complete entire routine
         _cancelTimer();
+        _phaseEndTime = null;
+        _updateWakelock(false);
         state = state.copyWith(
           remainingSeconds: 0,
           isRunning: false,

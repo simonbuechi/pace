@@ -1,6 +1,7 @@
 import 'dart:js_interop';
 import 'package:flutter/foundation.dart';
 import 'pwa_platform_stub.dart';
+export 'pwa_platform_stub.dart';
 
 @JS('pwaInstall.isInstalled')
 external bool? get _jsIsInstalled;

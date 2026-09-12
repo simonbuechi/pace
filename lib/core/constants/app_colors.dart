@@ -18,6 +18,13 @@ class AppColors {
     end: Alignment.bottomRight,
   );
 
+  // Signature Silver / Break Gradient (Grey / Silver)
+  static const LinearGradient silverGradient = LinearGradient(
+    colors: [Color(0xFF64748B), Color(0xFF334155)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
   // Surface & Neutral tones
   static const Color lightScaffold = Color(0xFFF8F9FD);
   static const Color darkScaffold = Color(0xFF100E17);

@@ -9,6 +9,7 @@ class UserSettings {
   final String breakSoundId;
   final bool soundEnabled;
   final bool notificationsEnabled;
+  final bool backgroundAnimationsEnabled;
 
   const UserSettings({
     this.themeMode = ThemeMode.system,
@@ -19,6 +20,7 @@ class UserSettings {
     this.breakSoundId = 'temple_bell',
     this.soundEnabled = true,
     this.notificationsEnabled = true,
+    this.backgroundAnimationsEnabled = true,
   });
 
   UserSettings copyWith({
@@ -30,6 +32,7 @@ class UserSettings {
     String? breakSoundId,
     bool? soundEnabled,
     bool? notificationsEnabled,
+    bool? backgroundAnimationsEnabled,
   }) {
     return UserSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -42,6 +45,8 @@ class UserSettings {
       breakSoundId: breakSoundId ?? this.breakSoundId,
       soundEnabled: soundEnabled ?? this.soundEnabled,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
+      backgroundAnimationsEnabled:
+          backgroundAnimationsEnabled ?? this.backgroundAnimationsEnabled,
     );
   }
 
@@ -54,6 +59,7 @@ class UserSettings {
     'breakSoundId': breakSoundId,
     'soundEnabled': soundEnabled,
     'notificationsEnabled': notificationsEnabled,
+    'backgroundAnimationsEnabled': backgroundAnimationsEnabled,
   };
 
   factory UserSettings.fromJson(Map<String, dynamic> json) {
@@ -70,6 +76,8 @@ class UserSettings {
       breakSoundId: json['breakSoundId'] as String? ?? 'temple_bell',
       soundEnabled: json['soundEnabled'] as bool? ?? true,
       notificationsEnabled: json['notificationsEnabled'] as bool? ?? true,
+      backgroundAnimationsEnabled:
+          json['backgroundAnimationsEnabled'] as bool? ?? true,
     );
   }
 }

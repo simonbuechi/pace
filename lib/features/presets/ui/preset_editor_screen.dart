@@ -197,7 +197,7 @@ class _PresetEditorScreenState extends ConsumerState<PresetEditorScreen> {
                         ),
                         Text(
                           '$_iterations cycles',
-                          style: GoogleFonts.inter(
+                          style: TextStyle(
                             fontWeight: FontWeight.w700,
                             color: theme.colorScheme.primary,
                           ),
@@ -208,7 +208,6 @@ class _PresetEditorScreenState extends ConsumerState<PresetEditorScreen> {
                       value: _iterations.toDouble(),
                       min: 1,
                       max: 12,
-                      divisions: 11,
                       onChanged: (val) =>
                           setState(() => _iterations = val.round()),
                     ),
@@ -448,12 +447,11 @@ class _PhaseConfigModalState extends State<_PhaseConfigModal> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Minutes', style: GoogleFonts.inter(fontSize: 12)),
+                    const Text('Minutes', style: TextStyle(fontSize: 12)),
                     Slider(
                       value: _minutes.toDouble(),
                       min: 0,
                       max: 90,
-                      divisions: 90,
                       onChanged: (v) => setState(() => _minutes = v.round()),
                     ),
                   ],
@@ -464,12 +462,11 @@ class _PhaseConfigModalState extends State<_PhaseConfigModal> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Seconds', style: GoogleFonts.inter(fontSize: 12)),
+                    const Text('Seconds', style: TextStyle(fontSize: 12)),
                     Slider(
                       value: _seconds.toDouble(),
                       min: 0,
                       max: 55,
-                      divisions: 11,
                       onChanged: (v) => setState(() => _seconds = v.round()),
                     ),
                   ],

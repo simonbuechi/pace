@@ -211,102 +211,257 @@ class PwaInstallBanner extends ConsumerWidget {
     }
 
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 6, 16, 10),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: AppColors.primaryPurple.withValues(alpha: 0.25),
+    return Material(
+      elevation: 8,
+      shadowColor: Colors.black54,
+      color: isDark ? const Color(0xFF231F33) : const Color(0xFF1E1E28),
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.12),
+            width: 1,
+          ),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                gradient: AppColors.primaryGradient,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(
+                Icons.install_mobile_rounded,
+                color: Colors.white,
+                size: 16,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'Install Pace Amigo for full-screen mode',
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 13,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const SizedBox(width: 8),
+            TextButton(
+              onPressed: () async {
+                if (pwaState.canPrompt) {
+                  final accepted =
+                      await ref.read(pwaProvider.notifier).promptInstall();
+                  if (!accepted && context.mounted) {
+                    showInstallInstructions(context);
+                  }
+                } else {
+                  showInstallInstructions(context);
+                }
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFFFF529A),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(
+                'Install',
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                  color: const Color(0xFFFF529A),
+                ),
+              ),
+            ),
+            const SizedBox(width: 2),
+            IconButton(
+              icon: const Icon(Icons.close_rounded,
+                  size: 16, color: Colors.white70),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 26, minHeight: 26),
+              tooltip: 'Dismiss',
+              onPressed: () {
+                ref.read(pwaProvider.notifier).dismissBanner();
+              },
+            ),
+          ],
+        ),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              gradient: AppColors.primaryGradient,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.install_mobile_rounded,
-              color: Colors.white,
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Install Pace Amigo',
-                  style: GoogleFonts.inter(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14,
-                  ),
-                ),
-                Text(
-                  'Enjoy full-screen, offline focus without browser bars.',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          FilledButton.tonal(
-            onPressed: () async {
+    );
+  }
+}
+
+/// Dedicated install element placed directly in the desktop sidebar / navigation rail.
+class SidebarInstallCard extends ConsumerWidget {
+  final bool isExtended;
+
+  const SidebarInstallCard({super.key, required this.isExtended});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pwaState = ref.watch(pwaProvider);
+    if (!pwaState.shouldShowInstallPrompt) {
+      return const SizedBox.shrink();
+    }
+
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    if (!isExtended) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: Tooltip(
+          message: 'Install Pace Amigo',
+          child: InkWell(
+            borderRadius: BorderRadius.circular(14),
+            onTap: () async {
               if (pwaState.canPrompt) {
                 final accepted =
                     await ref.read(pwaProvider.notifier).promptInstall();
                 if (!accepted && context.mounted) {
-                  showInstallInstructions(context);
+                  PwaInstallBanner.showInstallInstructions(context);
                 }
               } else {
-                showInstallInstructions(context);
+                PwaInstallBanner.showInstallInstructions(context);
               }
             },
-            style: FilledButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              visualDensity: VisualDensity.compact,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                gradient: AppColors.primaryGradient,
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primaryMagenta.withValues(alpha: 0.35),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-            ),
-            child: Text(
-              'Install',
-              style: GoogleFonts.inter(
-                fontWeight: FontWeight.w700,
-                fontSize: 13,
+              child: const Icon(
+                Icons.install_mobile_rounded,
+                color: Colors.white,
+                size: 20,
               ),
             ),
           ),
-          const SizedBox(width: 4),
-          IconButton(
-            icon: const Icon(Icons.close_rounded, size: 18),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-            tooltip: 'Dismiss',
-            onPressed: () {
-              ref.read(pwaProvider.notifier).dismissBanner();
-            },
+        ),
+      );
+    }
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(10, 8, 10, 16),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isDark
+            ? const Color(0xFF1E1A29)
+            : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.55),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  gradient: AppColors.primaryGradient,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.install_mobile_rounded,
+                  color: Colors.white,
+                  size: 16,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Install App',
+                  style: GoogleFonts.inter(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.close_rounded,
+                  size: 16,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+                tooltip: 'Dismiss',
+                onPressed: () {
+                  ref.read(pwaProvider.notifier).dismissBanner();
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Full-screen & offline mode',
+            style: theme.textTheme.bodySmall?.copyWith(
+              fontSize: 11,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            height: 34,
+            child: FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: AppColors.primaryMagenta,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.zero,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onPressed: () async {
+                if (pwaState.canPrompt) {
+                  final accepted =
+                      await ref.read(pwaProvider.notifier).promptInstall();
+                  if (!accepted && context.mounted) {
+                    PwaInstallBanner.showInstallInstructions(context);
+                  }
+                } else {
+                  PwaInstallBanner.showInstallInstructions(context);
+                }
+              },
+              child: Text(
+                'Install Now',
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 }
+

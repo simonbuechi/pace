@@ -155,7 +155,7 @@ void main() {
       await tester.pump();
 
       // Banner should be visible
-      expect(find.text('Install Pace Amigo'), findsOneWidget);
+      expect(find.textContaining('Install Pace Amigo'), findsOneWidget);
       expect(find.text('Install'), findsOneWidget);
 
       // Tap Dismiss (close icon)
@@ -163,7 +163,77 @@ void main() {
       await tester.pump();
 
       // Banner should now be dismissed
-      expect(find.text('Install Pace Amigo'), findsNothing);
+      expect(find.textContaining('Install Pace Amigo'), findsNothing);
+    });
+
+    testWidgets('SidebarInstallCard renders in extended and collapsed mode and dismisses',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            pwaProvider.overrideWith((ref) {
+              final notifier = PwaNotifier(MockPwaPlatform(standalone: false));
+              notifier.state = const PwaState(
+                isWeb: true,
+                isStandalone: false,
+                canPrompt: true,
+                isDismissed: false,
+              );
+              return notifier;
+            }),
+          ],
+          child: const MaterialApp(
+            home: Scaffold(
+              body: SidebarInstallCard(isExtended: true),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pump();
+
+      // Extended sidebar card should show title and action button
+      expect(find.text('Install App'), findsOneWidget);
+      expect(find.text('Install Now'), findsOneWidget);
+      expect(find.text('Full-screen & offline mode'), findsOneWidget);
+
+      // Dismiss card
+      await tester.tap(find.byIcon(Icons.close_rounded));
+      await tester.pump();
+
+      expect(find.text('Install App'), findsNothing);
+    });
+
+    testWidgets('SidebarInstallCard renders compact icon button when not extended',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            pwaProvider.overrideWith((ref) {
+              final notifier = PwaNotifier(MockPwaPlatform(standalone: false));
+              notifier.state = const PwaState(
+                isWeb: true,
+                isStandalone: false,
+                canPrompt: true,
+                isDismissed: false,
+              );
+              return notifier;
+            }),
+          ],
+          child: const MaterialApp(
+            home: Scaffold(
+              body: SidebarInstallCard(isExtended: false),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pump();
+
+      // Compact mode should show the install icon
+      expect(find.byIcon(Icons.install_mobile_rounded), findsOneWidget);
+      expect(find.text('Install App'), findsNothing);
     });
   });
 }
+

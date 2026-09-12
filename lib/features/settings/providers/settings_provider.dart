@@ -75,6 +75,11 @@ class SettingsNotifier extends StateNotifier<UserSettings> {
     state = state.copyWith(notificationsEnabled: enabled);
     await _persist();
   }
+
+  Future<void> toggleBackgroundAnimations(bool enabled) async {
+    state = state.copyWith(backgroundAnimationsEnabled: enabled);
+    await _persist();
+  }
 }
 
 final settingsProvider =
