@@ -13,7 +13,7 @@
     "background_color": "#100E17",
     "theme_color": "#9025A7",
     "description": "Clean, simple, and playful focus & interval timer.",
-    "orientation": "portrait-primary",
+    "orientation": "any",
     "categories": [
         "utilities",
         "productivity",
