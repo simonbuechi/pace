@@ -143,12 +143,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ],
                       ),
               ),
+              trailingAtBottom: true,
               trailing: pwaState.shouldShowInstallPrompt
-                  ? Expanded(
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: SidebarInstallCard(isExtended: isExtendedRail),
+                  ? ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: isExtendedRail ? 200 : 56,
                       ),
+                      child: SidebarInstallCard(isExtended: isExtendedRail),
                     )
                   : null,
               destinations: const [
