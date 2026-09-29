@@ -1,118 +1,86 @@
 # Pace Amigo
 
-> **Clean and simple, yet unmistakably playful focus & interval timer for Web, iOS, and Android.**
+**Pace Amigo** (or **Pace** for short) is a clean, modern, and highly customizable interval timer web application built with **React 18**, **TypeScript**, **Vite**, **Tailwind CSS**, and the **Web Audio API**.
 
-Pace Amigo balances razor-sharp utility with tactile joy. Designed to work consistently across platforms (Web, iOS, Android, and Desktop), it combines clean typography, fluid interval visualizers, ambient audio cues, and responsive cross-platform storage.
-
----
-
-## 🎨 Design System
-
-Pace Amigo features a signature diagonal gradient (`#9025A7` amethyst purple to `#D81860` electric magenta), bouncy spring physics, and organic micro-interactions.
-
-See the complete design specification in [DESIGN.md](DESIGN.md).
+Live Web App: **[pace.simibu.ch](https://pace.simibu.ch/)**
 
 ---
 
-## 📱 Platforms Supported
+## ✨ Features
 
-- **Web**: Responsive layout with modern PWA capabilities, Web Audio, and IndexedDB persistence.
-- **iOS**: Native Cupertino integration, background audio & interval timing.
-- **Android**: Material 3 theming, notification channel alerts, and adaptive icons.
-
----
-
-## 🚀 Getting Started
-
-### 1. Prerequisites
-
-- [Flutter SDK](https://docs.flutter.dev/get-started/install) (3.24+ recommended)
-- Google Chrome or Edge for Web testing
-- Android Studio / Xcode (optional, for mobile targets)
-
-### 2. Environment Setup
-
-Copy `.env.example` to `.env` in the project root:
-
-```bash
-cp .env.example .env
-```
-
-Configure your Firebase Web backend parameters:
-
-```env
-FIREBASE_API_KEY=your_api_key_here
-FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
-FIREBASE_PROJECT_ID=your_project_id
-FIREBASE_STORAGE_BUCKET=your_project_id.firebasestorage.app
-FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
-FIREBASE_APP_ID=your_app_id
-FIREBASE_MEASUREMENT_ID=your_measurement_id
-```
-
-> **Security Note**: `.env` is ignored by git (`.gitignore`) to keep credentials private.
+* **Direct Numeric Quick Start**: Enter precise **Minutes** and **Seconds** for Focus and Break intervals (`[ MM ] min : [ SS ] sec`), plus custom **Round Iterations** (`[ NN ] rounds`) with clean steppers and synchronized sliders.
+* **Routine Library & Sequence Studio**: Create, edit, duplicate, and organize custom interval routines with arbitrary multi-phase sequences (e.g. Warmup, High Intensity, Rest, Cooldown).
+* **Routine Completion Logging**: Sessions that run to completion without early cancellation are automatically logged to browser storage with full telemetry (total time, cycles, focus/break breakdown, and timestamp). View logs directly on routine cards.
+* **Material 3 Expressive Styling**: Calmed, uncluttered visual aesthetic with subtle micro-borders, airy spacing, and a signature primary action gradient from `#9123A6` to `#D7195F`.
+* **Single Sans-Serif Typography**: Clean, unified type hierarchy using `Plus Jakarta Sans` throughout the app. Numeric readouts use `tabular-nums` for alignment without monospace fonts.
+* **Immersive Fullscreen Visualizer**: Distraction-free focus mode with smooth atmospheric color breathing matching the active interval phase.
+* **Real-Time Web Audio Synthesizer**: Pure procedural 24-bit zero-latency alerts generated via the Web Audio API (*Standard Beep*, *Temple Bell*, *Digital Pulse*) with zero external audio assets.
+* **Light & Dark Theme Engine**: Instant theme switching (*Light*, *Dark*, *System OS*) with curated Material 3 color palettes and custom hex color overrides.
+* **Wall-Clock Drift Compensation**: Countdown engine compensates for background tab throttling using high-precision timestamp deltas.
+* **Desktop Notifications**: Background tab interval alerts powered by the browser Notification API.
+* **Floating Mini-Player**: Live countdown pill persists while configuring routines or settings during an active session.
+* **Keyboard Shortcuts**:
+  * `Space`: Play / Pause timer
+  * `N` / `→`: Skip to Next interval
+  * `P` / `←`: Skip to Previous interval
+  * `R`: Reset routine
+  * `F`: Toggle Fullscreen visualizer
+  * `M`: Mute / Unmute alert sounds
+  * `Esc`: Minimize visualizer
+  * `1`, `2`, `3`: Switch views (*Quick Start*, *Routines*, *Settings*)
 
 ---
 
-## 🌐 Running & Testing the Web Version
+## 🏗️ Architecture & Tech Stack
 
-### Development Mode (with Hot Reload)
-
-To launch the app directly in Google Chrome:
-
-```bash
-flutter run -d chrome
-```
-
-Or in Microsoft Edge:
-
-```bash
-flutter run -d edge
-```
-
-Or run headless as a local web server (accessible from any browser or network device):
-
-```bash
-flutter run -d web-server --web-port=8080
-```
-
-### Production Web Build
-
-To compile an optimized production web bundle:
-
-```bash
-flutter build web
-```
-
-To preview the production build locally:
-
-```bash
-python -m http.server 8080 --directory build/web
-```
-Then visit `http://localhost:8080`.
+* **Framework**: [React 18](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
+* **Build Tool**: [Vite 8](https://vitejs.dev/)
+* **Styling**: [Tailwind CSS 3](https://tailwindcss.com/)
+* **Icons**: [Lucide React](https://lucide.dev/)
+* **Audio**: Native [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API) procedural synthesis
+* **Testing**: [Vitest](https://vitest.dev/)
+* **Linter**: [Oxlint](https://oxc.rs/)
+* **Deployment**: GitHub Pages via GitHub Actions with custom domain (`pace.simibu.ch`)
 
 ---
 
-## 🧪 Testing
+## 🛠️ Development & Build
 
-Run all unit and widget tests:
+### Prerequisites
+* [Node.js](https://nodejs.org/) (v20 or higher recommended)
+* `npm`
 
-```bash
-flutter test
-```
-
-Run static analysis:
+### Commands
 
 ```bash
-flutter analyze
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Run unit tests
+npm test
+
+# Run linter
+npm run lint
+
+# Build production bundle (tsc -b && vite build)
+npm run build
+
+# Preview production build locally
+npm run preview
 ```
 
 ---
 
-## 🏗️ Architecture
+## 🚀 Deployment (GitHub Pages)
 
-- **State Management**: `flutter_riverpod` (v2)
-- **Local Storage**: `hive` & `hive_flutter` (IndexedDB on Web, local NoSQL on mobile)
-- **Sound Effects**: `audioplayers` (synthesized interval transition chimes)
-- **Design & Typography**: Plus Jakarta Sans (`google_fonts`)
-- **Backend / Sync**: Firebase Web Backend (configured via `.env`)
+The repository includes an automated GitHub Actions deployment workflow at [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml):
+
+1. Triggers automatically on push to the `main` branch (or via manual `workflow_dispatch`).
+2. Installs dependencies via `npm ci`.
+3. Runs the test suite via `npm test`.
+4. Compiles the production bundle via `npm run build` into `dist/`.
+5. Includes `public/CNAME` (`pace.simibu.ch`) in the build output.
+6. Deploys to GitHub Pages at **`https://pace.simibu.ch/`**.

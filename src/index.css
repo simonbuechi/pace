@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-surface-base: #F8FAFC;
+  --color-surface-card: #FFFFFF;
+  --color-surface-elevated: #F1F5F9;
+  --color-text-main: #0F172A;
+  --color-text-muted: #64748B;
+  --color-border-subtle: rgba(226, 232, 240, 0.85);
+
+  --neu-shadow-raised: 0 4px 16px -2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.02);
+  --neu-shadow-flat: 0 1px 4px rgba(15, 23, 42, 0.04);
+  --neu-shadow-inset: inset 0 1px 2px rgba(15, 23, 42, 0.04);
+  --neu-shadow-inset-deep: inset 0 2px 4px rgba(15, 23, 42, 0.06);
+  
+  --color-focus: #DE5D35;
+  --color-break: #2E798A;
+  --color-accent: #FFB347;
+  --color-glow: rgba(222, 93, 53, 0.15);
+}
+
+.dark {
+  --color-surface-base: #0B0E14;
+  --color-surface-card: #151921;
+  --color-surface-elevated: #1D232F;
+  --color-text-main: #F1F5F9;
+  --color-text-muted: #94A3B8;
+  --color-border-subtle: rgba(255, 255, 255, 0.08);
+
+  --neu-shadow-raised: 0 8px 24px -4px rgba(0, 0, 0, 0.45);
+  --neu-shadow-flat: 0 1px 4px rgba(0, 0, 0, 0.3);
+  --neu-shadow-inset: inset 0 1px 3px rgba(0, 0, 0, 0.35);
+  --neu-shadow-inset-deep: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+body {
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--color-surface-base);
+  color: var(--color-text-main);
+  transition: background-color 0.4s ease, color 0.3s ease;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Reusable Neumorphic Tactile Classes */
+.neu-raised {
+  box-shadow: var(--neu-shadow-raised);
+}
+
+.neu-flat {
+  box-shadow: var(--neu-shadow-flat);
+}
+
+.neu-inset {
+  box-shadow: var(--neu-shadow-inset);
+}
+
+.neu-inset-deep {
+  box-shadow: var(--neu-shadow-inset-deep);
+}
+
+.neu-pressed:active {
+  box-shadow: var(--neu-shadow-inset) !important;
+  transform: translateY(1px);
+}
+
+.font-mono-numbers {
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+/* Custom animated background for visualizer */
+@keyframes pulseSubtle {
+  0%, 100% { opacity: 0.15; transform: scale(1); }
+  50% { opacity: 0.25; transform: scale(1.03); }
+}
+
+.animate-pulse-subtle {
+  animation: pulseSubtle 4s ease-in-out infinite;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.45);
+}

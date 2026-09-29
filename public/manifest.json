@@ -1,0 +1,17 @@
+{
+  "name": "Pace Amigo",
+  "short_name": "Pace",
+  "description": "Minimalist and customizable interval timer web app with Material 3 Expressive and Soft Tactile Neumorphism.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8FAFC",
+  "theme_color": "#9123A6",
+  "icons": [
+    {
+      "src": "/logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}
