@@ -62,7 +62,15 @@ export interface SoundOption {
 
 export type ThemeMode = 'system' | 'light' | 'dark';
 
-export type BackgroundAnimationId = 'none' | 'breathing' | 'orbs' | 'aurora' | 'stars';
+export type BackgroundAnimationId =
+  | 'none'
+  | 'breathing'
+  | 'orbs'
+  | 'aurora'
+  | 'stars'
+  | 'warp'
+  | 'matrix'
+  | 'liquid';
 
 export interface BackgroundAnimationOption {
   id: BackgroundAnimationId;

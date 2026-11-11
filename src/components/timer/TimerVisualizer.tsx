@@ -46,6 +46,9 @@ export const TimerVisualizer: React.FC = () => {
     { id: 'orbs', label: 'Floating Orbs' },
     { id: 'aurora', label: 'Aurora Wave' },
     { id: 'stars', label: 'Cosmic Stars' },
+    { id: 'warp', label: 'Hyperspace Warp' },
+    { id: 'matrix', label: 'Cyber Matrix' },
+    { id: 'liquid', label: 'Liquid Morph' },
   ];
 
   // Background color calculation

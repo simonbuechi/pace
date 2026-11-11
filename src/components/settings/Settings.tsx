@@ -22,6 +22,9 @@ import {
   CircleDot,
   Sparkle,
   Ban,
+  Rocket,
+  Binary,
+  Droplet,
 } from 'lucide-react';
 import { useSettings } from '../../context/SettingsContext';
 import { CURATED_PALETTES } from '../../core/palettes';
@@ -384,8 +387,26 @@ export const Settings: React.FC = () => {
                   {
                     id: 'stars',
                     label: 'Cosmic Starlight',
-                    desc: 'Subtle twinkling stars',
+                    desc: '3D volumetric starfield',
                     icon: Sparkles,
+                  },
+                  {
+                    id: 'warp',
+                    label: 'Hyperspace Warp',
+                    desc: 'Speed warp streak tunnel',
+                    icon: Rocket,
+                  },
+                  {
+                    id: 'matrix',
+                    label: 'Cyber Matrix',
+                    desc: 'Cascading digital data rain',
+                    icon: Binary,
+                  },
+                  {
+                    id: 'liquid',
+                    label: 'Liquid Morph',
+                    desc: 'Distorting 3D noise sphere',
+                    icon: Droplet,
                   },
                 ] as const
               ).map(({ id, label, desc, icon: Icon }) => {
@@ -399,7 +420,7 @@ export const Settings: React.FC = () => {
                       isSelected
                         ? 'bg-[var(--color-focus)]/10 text-[var(--color-focus)] border-2 border-[var(--color-focus)] shadow-sm'
                         : 'bg-slate-50/60 dark:bg-slate-800/40 border-slate-200/60 dark:border-slate-800 text-[var(--color-text-muted)] hover:text-[var(--color-text-main)] hover:border-slate-300 dark:hover:border-slate-700'
-                    } ${id === 'stars' ? 'sm:col-span-2' : ''}`}
+                    }`}
                   >
                     <div className="flex items-center gap-3">
                       <div
