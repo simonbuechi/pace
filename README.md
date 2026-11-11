@@ -13,7 +13,7 @@ Live Web App: **[pace.simibu.ch](https://pace.simibu.ch/)**
 * **Routine Completion Logging**: Sessions that run to completion without early cancellation are automatically logged to browser storage with full telemetry (total time, cycles, focus/break breakdown, and timestamp). View logs directly on routine cards.
 * **Material 3 Expressive Styling**: Calmed, uncluttered visual aesthetic with subtle micro-borders, airy spacing, and a signature primary action gradient from `#9123A6` to `#D7195F`.
 * **Single Sans-Serif Typography**: Clean, unified type hierarchy using `Plus Jakarta Sans` throughout the app. Numeric readouts use `tabular-nums` for alignment without monospace fonts.
-* **Immersive Fullscreen Visualizer**: Distraction-free focus mode with smooth atmospheric color breathing matching the active interval phase.
+* **Immersive Fullscreen Visualizer & Ambient Background Animations**: Distraction-free focus mode with smooth atmospheric color matching the active interval phase and selectable background animations (*Breathing Pulse*, *Floating Orbs*, *Aurora Wave*, *Cosmic Starlight*, or *None*) that gracefully pause when the timer is paused.
 * **Real-Time Web Audio Synthesizer**: Pure procedural 24-bit zero-latency alerts generated via the Web Audio API (*Standard Beep*, *Temple Bell*, *Digital Pulse*) with zero external audio assets.
 * **Light & Dark Theme Engine**: Instant theme switching (*Light*, *Dark*, *System OS*) with curated Material 3 color palettes and custom hex color overrides.
 * **Wall-Clock Drift Compensation**: Countdown engine compensates for background tab throttling using high-precision timestamp deltas.

@@ -12,9 +12,12 @@ import {
   ArrowLeft,
   Trophy,
   Sparkles,
+  Wand2,
 } from 'lucide-react';
 import { useTimer } from '../../context/TimerContext';
 import { useSettings } from '../../context/SettingsContext';
+import { TimerBackgroundAnimation } from './TimerBackgroundAnimation';
+import type { BackgroundAnimationId } from '../../types';
 
 export const TimerVisualizer: React.FC = () => {
   const {
@@ -31,10 +34,19 @@ export const TimerVisualizer: React.FC = () => {
     toggleFullscreen,
   } = useTimer();
 
-  const { activeFocusColor, activeBreakColor, settings, toggleSound } = useSettings();
+  const { activeFocusColor, activeBreakColor, settings, toggleSound, updateBackgroundAnimation } = useSettings();
 
   const [controlsVisible, setControlsVisible] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showAnimationMenu, setShowAnimationMenu] = useState(false);
+
+  const animationOptions: { id: BackgroundAnimationId; label: string }[] = [
+    { id: 'none', label: 'None' },
+    { id: 'breathing', label: 'Breathing Pulse' },
+    { id: 'orbs', label: 'Floating Orbs' },
+    { id: 'aurora', label: 'Aurora Wave' },
+    { id: 'stars', label: 'Cosmic Stars' },
+  ];
 
   // Background color calculation
   let targetBgColor: string;
@@ -124,6 +136,13 @@ export const TimerVisualizer: React.FC = () => {
       {/* Subtle ambient lighting vignette overlay */}
       <div className="absolute inset-0 bg-radial from-white/10 via-black/15 to-black/40 pointer-events-none" />
 
+      {/* Dynamic Background Animation */}
+      <TimerBackgroundAnimation
+        animation={settings.backgroundAnimation || 'breathing'}
+        isRunning={state.isRunning && !state.isCompleted}
+        baseColor={targetBgColor}
+      />
+
       {/* Top Header Controls (Animated auto-hide) */}
       <div
         className={`absolute top-0 left-0 right-0 p-6 flex items-center justify-between z-20 transition-all duration-300 ${
@@ -142,7 +161,52 @@ export const TimerVisualizer: React.FC = () => {
           {state.preset.name}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 relative">
+          {/* Background Animation Quick Picker */}
+          <div className="relative">
+            <button
+              onClick={() => setShowAnimationMenu((v) => !v)}
+              className="p-3 rounded-2xl bg-black/25 hover:bg-black/40 backdrop-blur-md transition-all active:scale-95 border border-white/10 flex items-center gap-1.5"
+              title="Change Background Animation"
+            >
+              <Wand2 size={18} />
+              <span className="hidden md:inline text-xs font-bold capitalize">
+                {settings.backgroundAnimation || 'breathing'}
+              </span>
+            </button>
+
+            {showAnimationMenu && (
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="absolute right-0 top-14 w-48 rounded-2xl bg-slate-900/90 backdrop-blur-xl border border-white/15 p-2 shadow-2xl text-xs z-30"
+              >
+                <div className="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-white/50 border-b border-white/10 mb-1">
+                  Animation Style
+                </div>
+                {animationOptions.map((opt) => {
+                  const active = (settings.backgroundAnimation || 'breathing') === opt.id;
+                  return (
+                    <button
+                      key={opt.id}
+                      onClick={() => {
+                        updateBackgroundAnimation(opt.id);
+                        setShowAnimationMenu(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 rounded-xl flex items-center justify-between transition-colors ${
+                        active
+                          ? 'bg-white/20 text-white font-bold'
+                          : 'text-white/80 hover:bg-white/10 hover:text-white'
+                      }`}
+                    >
+                      <span>{opt.label}</span>
+                      {active && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
           <button
             onClick={() => toggleSound(!settings.soundEnabled)}
             className="p-3 rounded-2xl bg-black/25 hover:bg-black/40 backdrop-blur-md transition-all active:scale-95 border border-white/10"

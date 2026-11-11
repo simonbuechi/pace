@@ -87,6 +87,103 @@ body {
   animation: pulseSubtle 4s ease-in-out infinite;
 }
 
+/* 1. Breathing Pulse Keyframes (Gentle 8s rhythm) */
+@keyframes breatheSlow {
+  0%, 100% { transform: scale(0.92); opacity: 0.08; }
+  50% { transform: scale(1.18); opacity: 0.22; }
+}
+
+@keyframes breatheMid {
+  0%, 100% { transform: scale(0.95); opacity: 0.12; }
+  50% { transform: scale(1.22); opacity: 0.28; }
+}
+
+@keyframes breatheCore {
+  0%, 100% { transform: scale(0.98); opacity: 0.16; }
+  50% { transform: scale(1.25); opacity: 0.35; }
+}
+
+.animate-breathe-slow {
+  animation: breatheSlow 8s ease-in-out infinite;
+}
+
+.animate-breathe-mid {
+  animation: breatheMid 8s ease-in-out infinite 0.4s;
+}
+
+.animate-breathe-core {
+  animation: breatheCore 8s ease-in-out infinite 0.8s;
+}
+
+/* 2. Floating Orbs Keyframes */
+@keyframes floatOrb {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(35px, -45px) scale(1.08);
+  }
+  66% {
+    transform: translate(-30px, 30px) scale(0.94);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+.animate-float-orb {
+  animation: floatOrb 20s ease-in-out infinite;
+}
+
+/* 3. Aurora Fluid Waves Keyframes */
+@keyframes auroraSpin {
+  0% {
+    transform: rotate(0deg) scale(1) translate(0, 0);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.15) translate(40px, -30px);
+  }
+  100% {
+    transform: rotate(360deg) scale(1) translate(0, 0);
+  }
+}
+
+@keyframes auroraReverse {
+  0% {
+    transform: rotate(360deg) scale(1.1) translate(0, 0);
+  }
+  50% {
+    transform: rotate(180deg) scale(0.95) translate(-40px, 30px);
+  }
+  100% {
+    transform: rotate(0deg) scale(1.1) translate(0, 0);
+  }
+}
+
+.animate-aurora-spin {
+  animation: auroraSpin 32s ease-in-out infinite;
+}
+
+.animate-aurora-reverse {
+  animation: auroraReverse 28s ease-in-out infinite;
+}
+
+/* 4. Cosmic Twinkling Stars Keyframes */
+@keyframes twinkleStar {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.35);
+  }
+}
+
+.animate-twinkle-star {
+  animation: twinkleStar 4s ease-in-out infinite;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

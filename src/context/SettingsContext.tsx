@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import type { PaletteOption, SoundId, ThemeMode, UserSettings } from '../types';
+import type { BackgroundAnimationId, PaletteOption, SoundId, ThemeMode, UserSettings } from '../types';
 import { CURATED_PALETTES, DEFAULT_PALETTE } from '../core/palettes';
 import { StorageService } from '../core/storage';
 import { audioController } from '../core/audio';
@@ -18,6 +18,7 @@ interface SettingsContextType {
   toggleSound: (enabled: boolean) => void;
   updateVolume: (volume: number) => void;
   toggleNotifications: (enabled: boolean) => Promise<boolean>;
+  updateBackgroundAnimation: (animation: BackgroundAnimationId) => void;
   previewSound: (soundId: SoundId) => void;
 }
 
@@ -108,6 +109,10 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return true;
   };
 
+  const updateBackgroundAnimation = (animation: BackgroundAnimationId) => {
+    save({ ...settings, backgroundAnimation: animation });
+  };
+
   const previewSound = (soundId: SoundId) => {
     audioController.playSound(soundId, settings.soundVolume);
   };
@@ -127,6 +132,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         toggleSound,
         updateVolume,
         toggleNotifications,
+        updateBackgroundAnimation,
         previewSound,
       }}
     >

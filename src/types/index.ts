@@ -62,6 +62,14 @@ export interface SoundOption {
 
 export type ThemeMode = 'system' | 'light' | 'dark';
 
+export type BackgroundAnimationId = 'none' | 'breathing' | 'orbs' | 'aurora' | 'stars';
+
+export interface BackgroundAnimationOption {
+  id: BackgroundAnimationId;
+  name: string;
+  description: string;
+}
+
 export interface UserSettings {
   themeMode: ThemeMode;
   selectedPaletteId: string;
@@ -72,4 +80,5 @@ export interface UserSettings {
   soundEnabled: boolean;
   soundVolume: number; // 0.0 to 1.0
   notificationsEnabled: boolean;
+  backgroundAnimation: BackgroundAnimationId;
 }

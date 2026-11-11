@@ -111,6 +111,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
   soundEnabled: true,
   soundVolume: 0.85,
   notificationsEnabled: true,
+  backgroundAnimation: 'breathing',
 };
 
 export class StorageService {

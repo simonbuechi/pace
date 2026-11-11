@@ -17,6 +17,11 @@ import {
   CheckCircle2,
   HardDrive,
   Keyboard,
+  Wand2,
+  Waves,
+  CircleDot,
+  Sparkle,
+  Ban,
 } from 'lucide-react';
 import { useSettings } from '../../context/SettingsContext';
 import { CURATED_PALETTES } from '../../core/palettes';
@@ -26,7 +31,7 @@ import { usePresets } from '../../context/PresetsContext';
 import { NeuCard } from '../common/NeuCard';
 import { NeuButton } from '../common/NeuButton';
 import { NeuSlider } from '../common/NeuSlider';
-import type { SoundId, ThemeMode } from '../../types';
+import type { BackgroundAnimationId, SoundId, ThemeMode } from '../../types';
 
 export const Settings: React.FC = () => {
   const {
@@ -42,6 +47,7 @@ export const Settings: React.FC = () => {
     toggleSound,
     updateVolume,
     toggleNotifications,
+    updateBackgroundAnimation,
     previewSound,
   } = useSettings();
 
@@ -329,6 +335,103 @@ export const Settings: React.FC = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </NeuCard>
+
+          {/* Background Animation Selector Card */}
+          <NeuCard className="p-6 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-[var(--color-border-subtle)]">
+              <div className="flex items-center gap-2">
+                <Wand2 size={18} className="text-[var(--color-focus)]" />
+                <h2 className="font-extrabold text-base">Visualizer Background Animation</h2>
+              </div>
+              <span className="text-xs font-bold text-[var(--color-text-muted)] capitalize">
+                {settings.backgroundAnimation || 'breathing'}
+              </span>
+            </div>
+
+            <p className="text-xs text-[var(--color-text-muted)] leading-relaxed">
+              Ambient dynamic motion displayed in the fullscreen visualizer while your timer is running. Automatically pauses smoothly when the timer is paused.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {(
+                [
+                  {
+                    id: 'none',
+                    label: 'None',
+                    desc: 'Clean & Static',
+                    icon: Ban,
+                  },
+                  {
+                    id: 'breathing',
+                    label: 'Breathing Pulse',
+                    desc: 'Gentle expansion halo',
+                    icon: CircleDot,
+                  },
+                  {
+                    id: 'orbs',
+                    label: 'Floating Orbs',
+                    desc: 'Soft drifting bokeh bubbles',
+                    icon: Sparkle,
+                  },
+                  {
+                    id: 'aurora',
+                    label: 'Aurora Wave',
+                    desc: 'Smooth undulating gradients',
+                    icon: Waves,
+                  },
+                  {
+                    id: 'stars',
+                    label: 'Cosmic Starlight',
+                    desc: 'Subtle twinkling stars',
+                    icon: Sparkles,
+                  },
+                ] as const
+              ).map(({ id, label, desc, icon: Icon }) => {
+                const isSelected = (settings.backgroundAnimation || 'breathing') === id;
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => updateBackgroundAnimation(id as BackgroundAnimationId)}
+                    className={`p-3.5 rounded-2xl flex items-center justify-between gap-3 text-left transition-all border ${
+                      isSelected
+                        ? 'bg-[var(--color-focus)]/10 text-[var(--color-focus)] border-2 border-[var(--color-focus)] shadow-sm'
+                        : 'bg-slate-50/60 dark:bg-slate-800/40 border-slate-200/60 dark:border-slate-800 text-[var(--color-text-muted)] hover:text-[var(--color-text-main)] hover:border-slate-300 dark:hover:border-slate-700'
+                    } ${id === 'stars' ? 'sm:col-span-2' : ''}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                          isSelected
+                            ? 'bg-[var(--color-focus)] text-white shadow-sm'
+                            : 'bg-slate-100 dark:bg-slate-800 text-[var(--color-text-muted)]'
+                        }`}
+                      >
+                        <Icon size={18} />
+                      </div>
+                      <div>
+                        <div className="font-bold text-xs text-[var(--color-text-main)]">
+                          {label}
+                        </div>
+                        <div className="text-[10px] text-[var(--color-text-muted)] mt-0.5">
+                          {desc}
+                        </div>
+                      </div>
+                    </div>
+
+                    {isSelected && (
+                      <div
+                        className="w-5 h-5 rounded-full text-white flex items-center justify-center text-xs shrink-0 shadow-sm"
+                        style={{ backgroundColor: activeFocusColor }}
+                      >
+                        <Check size={12} strokeWidth={3} />
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </NeuCard>
         </div>
